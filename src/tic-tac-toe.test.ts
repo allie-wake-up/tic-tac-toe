@@ -25,6 +25,121 @@ describe("constructor", () => {
       "Invalid game: Player 2 has more moves than player 1",
     );
   });
+
+  test("valid game", () => {
+    const game: Cell[][] = [
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+    ];
+    expect(() => new TicTacToe("X", "O", game)).not.toThrow();
+  });
+
+  test("invalid game, player1 name length", () => {
+    const game: Cell[][] = [
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+    ];
+    expect(() => new TicTacToe("", "O", game)).toThrow(
+      "Invalid game: Both players must have a unique name at least 1 character long",
+    );
+  });
+
+  test("invalid game, player2 name length", () => {
+    const game: Cell[][] = [
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+    ];
+    expect(() => new TicTacToe("X", "", game)).toThrow(
+      "Invalid game: Both players must have a unique name at least 1 character long",
+    );
+  });
+
+  test("invalid game, players have same name", () => {
+    const game: Cell[][] = [
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+    ];
+    expect(() => new TicTacToe("X", "X", game)).toThrow(
+      "Invalid game: Both players must have a unique name at least 1 character long",
+    );
+  });
+
+  test("invalid game, too few rows", () => {
+    const game: Cell[][] = [
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+    ];
+    expect(() => new TicTacToe("X", "O", game)).toThrow(
+      "Invalid game: The game grid must be 4x4",
+    );
+  });
+
+  test("invalid game, too few columns", () => {
+    const game: Cell[][] = [
+      [null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+    ];
+    expect(() => new TicTacToe("X", "O", game)).toThrow(
+      "Invalid game: The game grid must be 4x4",
+    );
+  });
+
+  test("invalid game, too many columns", () => {
+    const game: Cell[][] = [
+      [null, null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+    ];
+    expect(() => new TicTacToe("X", "O", game)).toThrow(
+      "Invalid game: The game grid must be 4x4",
+    );
+  });
+
+  test("invalid game, too many rows", () => {
+    const game: Cell[][] = [
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+    ];
+    expect(() => new TicTacToe("X", "O", game)).toThrow(
+      "Invalid game: The game grid must be 4x4",
+    );
+  });
+
+  test("invalid game, both players have win conditions", () => {
+    const game1: Cell[][] = [
+      [1, 2, null, null],
+      [1, 2, null, null],
+      [1, 2, null, null],
+      [1, 2, null, null],
+    ];
+    expect(() => new TicTacToe("X", "O", game1)).toThrow(
+      "Invalid game: Both players have win conditions",
+    );
+    const game2: Cell[][] = [
+      [2, 1, null, null],
+      [2, 1, null, null],
+      [2, 1, null, null],
+      [2, 1, null, null],
+    ];
+    expect(() => new TicTacToe("X", "O", game2)).toThrow(
+      "Invalid game: Both players have win conditions",
+    );
+  });
 });
 
 describe("checkWinner", () => {
@@ -50,26 +165,7 @@ describe("checkWinner", () => {
     expect(ticTacToe.checkWinner()).toBe(null);
   });
 
-  test("both players have win conditions", () => {
-    const game1: Cell[][] = [
-      [1, 2, null, null],
-      [1, 2, null, null],
-      [1, 2, null, null],
-      [1, 2, null, null],
-    ];
-    let ticTacToe = new TicTacToe("X", "O", game1);
-    expect(() => ticTacToe.checkWinner()).toThrow('both players have win conditions');
-    const game2: Cell[][] = [
-      [2, 1, null, null],
-      [2, 1, null, null],
-      [2, 1, null, null],
-      [2, 1, null, null],
-    ];
-    ticTacToe = new TicTacToe("X", "O", game2);
-    expect(() => ticTacToe.checkWinner()).toThrow('both players have win conditions');
-  });
-
-  test.for([
+  test.for<Cell[][]>([
     [
       [1, 2, 2, 1],
       [1, 1, 2, 2],
@@ -94,12 +190,12 @@ describe("checkWinner", () => {
       [2, 2, 1, 1],
       [2, 1, 2, 1],
     ],
-  ])("Vertical winners, col %#", (game: number[][]) => {
-    const ticTacToe = new TicTacToe("X", "O", game as Cell[][]);
+  ])("Vertical winners, col %#", (game: Cell[][]) => {
+    const ticTacToe = new TicTacToe("X", "O", game);
     expect(ticTacToe.checkWinner()).toBe("X");
   });
 
-  test.for([
+  test.for<Cell[][]>([
     [
       [1, 1, 1, 1],
       [2, 2, 2, 1],
@@ -124,12 +220,12 @@ describe("checkWinner", () => {
       [2, 2, 1, 2],
       [1, 1, 1, 1],
     ],
-  ])("Horizontal winners, row %#", (game: number[][]) => {
-    const ticTacToe = new TicTacToe("X", "O", game as Cell[][]);
+  ])("Horizontal winners, row %#", (game: Cell[][]) => {
+    const ticTacToe = new TicTacToe("X", "O", game);
     expect(ticTacToe.checkWinner()).toBe("X");
   });
 
-  test.for([
+  test.for<Cell[][]>([
     [
       [2, 1, 1, 2],
       [2, 2, 1, 1],
@@ -142,12 +238,12 @@ describe("checkWinner", () => {
       [2, 2, 1, 1],
       [2, 1, 1, 2],
     ],
-  ])("Diagonal winners, diagonal %#", (game: number[][]) => {
-    const ticTacToe = new TicTacToe("X", "O", game as Cell[][]);
+  ])("Diagonal winners, diagonal %#", (game: Cell[][]) => {
+    const ticTacToe = new TicTacToe("X", "O", game);
     expect(ticTacToe.checkWinner()).toBe("O");
   });
 
-  test.for([
+  test.for<Cell[][]>([
     [
       [2, 2, 1, 2],
       [2, 2, 1, 1],
@@ -202,20 +298,20 @@ describe("checkWinner", () => {
       [1, 2, 2, 2],
       [2, 1, 2, 2],
     ],
-  ])("Box winners, box %#", (game: number[][]) => {
-    const ticTacToe = new TicTacToe("X", "O", game as Cell[][]);
+  ])("Box winners, box %#", (game: Cell[][]) => {
+    const ticTacToe = new TicTacToe("X", "O", game);
     expect(ticTacToe.checkWinner()).toBe("O");
   });
 
-  test.for([
+  test.for<Cell[][]>([
     [
       [2, 1, 2, 2],
       [1, 1, 2, 1],
       [2, 1, 1, 1],
       [2, 2, 1, 2],
     ],
-  ])("Corner winner", (game: number[][]) => {
-    const ticTacToe = new TicTacToe("X", "O", game as Cell[][]);
+  ])("Corner winner", (game: Cell[][]) => {
+    const ticTacToe = new TicTacToe("X", "O", game);
     expect(ticTacToe.checkWinner()).toBe("O");
   });
 });

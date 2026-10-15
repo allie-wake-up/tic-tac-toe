@@ -11,6 +11,10 @@ const game = [
 ]
 ```
 
+# AI Use
+
+The code was written entirely by hand initially. I then asked AI to look for any issues and fixed some of them manually. Transcript is located in `ai-session.txt`
+
 # Running Tests
 
 ```bash

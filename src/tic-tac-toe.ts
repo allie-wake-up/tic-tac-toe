@@ -6,18 +6,26 @@ export class TicTacToe {
 
   private game: Cell[][];
 
-  public constructor(
-    player1: string,
-    player2: string,
-    game: (1 | 2 | null)[][],
-  ) {
+  public constructor(player1: string, player2: string, game: Cell[][]) {
     this.player1 = player1;
     this.player2 = player2;
-    this.game = game;
+    this.game = this.game = game.map((row) => [...row]);
+
+    if (!player1.length || !player2.length || player1 === player2) {
+      throw new Error(
+        "Invalid game: Both players must have a unique name at least 1 character long",
+      );
+    }
 
     let player1Moves = 0;
     let player2Moves = 0;
+    if (game.length !== 4) {
+      throw new Error("Invalid game: The game grid must be 4x4");
+    }
     game.forEach((row) => {
+      if (row.length !== 4) {
+        throw new Error("Invalid game: The game grid must be 4x4");
+      }
       row.forEach((cell) => {
         if (cell === 1) {
           player1Moves++;
@@ -35,9 +43,16 @@ export class TicTacToe {
     if (player2Moves > player1Moves) {
       throw new Error("Invalid game: Player 2 has more moves than player 1");
     }
+    const winners = this.getWinners();
+    if (
+      winners.length > 1 &&
+      !winners.every((winner) => winner === winners[0])
+    ) {
+      throw new Error("Invalid game: Both players have win conditions");
+    }
   }
 
-  public checkWinner(): string | null {
+  private getWinners(): (1 | 2)[] {
     const g = this.game;
     const verticals: Cell[][] = [[], [], [], []];
     const horizontals: Cell[][] = [[], [], [], []];
@@ -92,29 +107,21 @@ export class TicTacToe {
       }
     }
 
-    const wins = [
-      ...verticals,
-      ...horizontals,
-      ...diagonals,
-      ...corners,
-      ...boxes,
-    ];
-    let winner: string | null = null;
-    wins.forEach((win) => {
-      if (win.every((player) => player === 1)) {
-        if (winner !== null && winner !== this.player1) {
-          throw new Error("both players have win conditions");
-        }
-        winner = this.player1;
-      }
-      if (win.every((player) => player === 2)) {
-        if (winner !== null && winner !== this.player2) {
-          throw new Error("both players have win conditions");
-        }
-        winner = this.player2;
-      }
-    });
-    return winner;
+    return [...verticals, ...horizontals, ...diagonals, ...corners, ...boxes]
+      .filter(
+        (win) =>
+          win.every((player) => player === 1) ||
+          win.every((player) => player === 2),
+      )
+      .map((win) => win[0]);
+  }
+
+  public checkWinner(): string | null {
+    const winners = this.getWinners();
+    if (winners.length) {
+      return winners[0] === 1 ? this.player1 : this.player2;
+    }
+    return null;
   }
 
   public anyMovesLeft(): boolean {

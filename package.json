@@ -2,9 +2,12 @@
   "name": "tic-tac-toe",
   "version": "0.1.0",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest run",
+    "typeCheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@tsconfig/recommended": "^1.0.13",
+    "typescript": "^7.0.2",
     "vitest": "^5.0.4"
   }
 }
